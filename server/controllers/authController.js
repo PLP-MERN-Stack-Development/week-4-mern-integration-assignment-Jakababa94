@@ -17,6 +17,7 @@ exports.protect = (req, res, next) => {
     res.status(401).json({ message: 'Not authorized, token failed' });
   }
 };
+
 // Register a new user
 exports.registerUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -46,12 +47,17 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    console.log('Login attempt:', { email, password });
     const user = await User.findOne({ email });
+    console.log('User found:', user);
     if (!user) {
       return res.status(401).json({ message: 'Invalid email' });
     }
 
+    console.log("hashed password:", user.password);
+
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password match:', isMatch);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid password' });
     }
