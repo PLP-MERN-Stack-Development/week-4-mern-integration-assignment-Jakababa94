@@ -6,7 +6,7 @@ const { uploadFile, uploadMultipleFiles } = require('../middleware/uploadMiddlew
 const router = express.Router();
 
 router.post('/', protect, uploadFile, createPost);
-router.get('/user', protect, getAllPostsForUser); // Get all posts for the logged-in user
+router.get('/user', protect, getAllPostsForUser); 
 router.get('/', protect, getAllPosts);
 router.get('/:id', protect, getPostById);
 router.put('/:id', protect, uploadMultipleFiles, updatePost);

@@ -2,14 +2,18 @@ const Post = require('../models/Post');
 
 // POST: Create a new post
 exports.createPost = async (req, res) => {
+  console.log(req.body);
   try {
-    const { title, content, category, tags } = req.body;
+    const { title, content, category, tags, author } = req.body; 
     const slug = title.toLowerCase().replace(/ /g, '-');
     const featuredImage = req.file ? req.file.filename : 'default-post.jpg';
 
     const newPost = new Post({
       title,
       content,
+      category,
+      author: req.user.id, // Assuming req.user is set by auth middleware
+      tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
       featuredImage,
       slug,
       excerpt: content.substring(0, 200),

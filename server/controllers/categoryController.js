@@ -33,19 +33,22 @@ exports.createCategory = async (req, res) => {
     }
 };
 
-// GET /api/categories: Get all categories
+// GET: Get all categories (admin only)
 exports.getAllCategories = async (req, res) => {
-    try {
-        const categories = await Category.find();
-        res.status(200).json({
-            success: true,
-            data: categories,
-        });
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Server error',
-        });
-    }
+  try {
+    const categories = await Category.find();
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch all categories" });
+  }
+};
+
+// GET: Get published categories (public)
+exports.getPublishedCategories = async (req, res) => {
+  try {
+    const categories = await Category.find({ isPublished: true });
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Failed to fetch categories" });
+  }
 };
