@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PenTool, Eye, EyeOff } from "lucide-react";
 import { authService } from "@/services/api";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -73,25 +74,26 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center space-x-2">
-            <PenTool className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">DevBlog</span>
+            <PenTool className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">DevBlog</span>
           </Link>
-          <div className="mt-4">
-            <Link to="/" className="text-sm text-blue-600 hover:text-blue-800">
+          <div className="mt-4 flex items-center justify-center space-x-4">
+            <Link to="/" className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
               ← Back to Home
             </Link>
+            <ThemeToggle />
           </div>
         </div>
 
-        <Card>
+        <Card className="dark:bg-gray-800 dark:border-gray-700">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Create Account</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl dark:text-white">Create Account</CardTitle>
+            <CardDescription className="dark:text-gray-300">
               Join our community and start sharing your stories
             </CardDescription>
           </CardHeader>

@@ -71,16 +71,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       <BlogHeader />
       
       <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <section className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Welcome to Our Blog
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Discover insights, tutorials, and stories about web development, design, and technology.
           </p>
         </section>
@@ -113,12 +113,12 @@ const Index = () => {
         {/* Featured Posts */}
         {featuredPosts.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Featured Posts</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Featured Posts</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {featuredPosts.map((post) => (
-                <Card key={post._id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500">
+                <Card key={post._id} className="hover:shadow-lg transition-shadow border-l-4 border-l-blue-500 dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
-                    <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
                       <Calendar className="h-4 w-4" />
                       {formatDate(post.createdAt)}
                       <User className="h-4 w-4 ml-2" />
@@ -126,10 +126,10 @@ const Index = () => {
                       <Eye className="h-4 w-4 ml-2" />
                       {post.views}
                     </div>
-                    <CardTitle className="text-xl hover:text-blue-600 transition-colors">
+                    <CardTitle className="text-xl hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                       <Link to={`/post/${post._id}`}>{post.title}</Link>
                     </CardTitle>
-                    <CardDescription className="text-base">
+                    <CardDescription className="text-base dark:text-gray-300">
                       {post.excerpt}
                     </CardDescription>
                   </CardHeader>
@@ -138,7 +138,7 @@ const Index = () => {
                       {post.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+                          className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
                         >
                           {tag}
                         </span>
@@ -158,19 +158,19 @@ const Index = () => {
 
         {/* Regular Posts */}
         <section>
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Latest Posts</h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Latest Posts</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {regularPosts.map((post) => (
-              <Card key={post._id} className="hover:shadow-lg transition-shadow">
+              <Card key={post._id} className="hover:shadow-lg transition-shadow dark:bg-gray-800 dark:border-gray-700">
                 <CardHeader>
-                  <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
                     <Calendar className="h-4 w-4" />
                     {formatDate(post.createdAt)}
                   </div>
-                  <CardTitle className="text-lg hover:text-blue-600 transition-colors">
+                  <CardTitle className="text-lg hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     <Link to={`/post/${post._id}`}>{post.title}</Link>
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="dark:text-gray-300">
                     {post.excerpt}
                   </CardDescription>
                 </CardHeader>
@@ -179,14 +179,14 @@ const Index = () => {
                     {post.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+                        className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
                       By {post.author.name}
                     </span>
                     <Link to={`/post/${post._id}`}>

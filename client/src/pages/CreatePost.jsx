@@ -81,14 +81,14 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       <BlogHeader />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+            <Link to="/" className="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Blog
             </Link>
@@ -106,7 +106,7 @@ const CreatePost = () => {
                 type="button"
                 variant="ghost"
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-red-600 hover:text-red-800"
+                className="flex items-center gap-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
               >
                 <LogOut className="h-4 w-4" />
                 Logout
@@ -114,9 +114,9 @@ const CreatePost = () => {
             </div>
           </div>
 
-          <Card>
+          <Card className="dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="text-2xl">
+              <CardTitle className="text-2xl dark:text-white">
                 {previewMode ? "Preview Post" : "Create New Post"}
               </CardTitle>
             </CardHeader>
