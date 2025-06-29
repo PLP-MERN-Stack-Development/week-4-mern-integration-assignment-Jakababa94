@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PenTool, Eye, EyeOff } from "lucide-react";
+import { authService } from "@/services/api";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,31 +14,47 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user starts typing
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
     
-    // API call to backend
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const response = await authService.login(formData);
+      console.log("Login successful:", response);
       
-      console.log("Login attempt:", formData);
-      // Handle successful login (redirect, store token, etc.)
+      // Notify other components that user has logged in
+      window.dispatchEvent(new CustomEvent('userLoggedIn', { detail: response.user }));
+      
+      // Redirect to create post page after successful login
+      navigate('/create-post');
       
     } catch (error) {
       console.error("Login error:", error);
+      
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with error status
+        setError(error.response.data?.message || `Login failed: ${error.response.status}`);
+      } else if (error.request) {
+        // Request was made but no response received
+        setError("No response from server. Please check your connection.");
+      } else {
+        // Something else happened
+        setError(error.message || "Login failed. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -52,6 +69,11 @@ const Login = () => {
             <PenTool className="h-8 w-8 text-blue-600" />
             <span className="text-2xl font-bold text-gray-900">DevBlog</span>
           </Link>
+          <div className="mt-4">
+            <Link to="/" className="text-sm text-blue-600 hover:text-blue-800">
+              ← Back to Home
+            </Link>
+          </div>
         </div>
 
         <Card>
@@ -63,6 +85,12 @@ const Login = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                  {error}
+                </div>
+              )}
+              
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input

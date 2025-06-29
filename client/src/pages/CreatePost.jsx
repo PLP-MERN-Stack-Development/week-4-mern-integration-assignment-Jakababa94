@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Eye, Save } from "lucide-react";
+import { ArrowLeft, Eye, Save, LogOut } from "lucide-react";
 import BlogHeader from "@/components/BlogHeader";
+import { postService } from "@/services/api";
+import { authService } from "@/services/api";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -19,6 +21,7 @@ const CreatePost = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -26,40 +29,56 @@ const CreatePost = () => {
       ...formData,
       [name]: type === 'checkbox' ? e.target.checked : value,
     });
+    // Clear error when user starts typing
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
     try {
-      // API call to backend
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify({
-          ...formData,
-          tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
-        })
-      });
+      const postData = {
+        ...formData,
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+      };
 
-      console.log("Post creation attempt:", formData);
+      const response = await postService.createPost(postData);
+      console.log("Post created successfully:", response);
       
       // On success, redirect to the new post or posts list
-      // navigate('/post/' + newPostId);
       navigate('/');
       
     } catch (error) {
       console.error("Post creation error:", error);
+      
+      // Handle different types of errors
+      if (error.response) {
+        // Server responded with error status
+        setError(error.response.data?.message || `Failed to create post: ${error.response.status}`);
+      } else if (error.request) {
+        // Request was made but no response received
+        setError("No response from server. Please check your connection.");
+      } else {
+        // Something else happened
+        setError(error.message || "Failed to create post. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const tagsArray = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      authService.logout();
+      // Notify other components that user has logged out
+      window.dispatchEvent(new CustomEvent('userLoggedOut'));
+      navigate('/');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -83,6 +102,15 @@ const CreatePost = () => {
                 <Eye className="h-4 w-4" />
                 {previewMode ? "Edit" : "Preview"}
               </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-red-600 hover:text-red-800"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
             </div>
           </div>
 
@@ -95,6 +123,12 @@ const CreatePost = () => {
             <CardContent>
               {!previewMode ? (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+                      {error}
+                    </div>
+                  )}
+                  
                   <div className="space-y-2">
                     <Label htmlFor="title">Title *</Label>
                     <Input

@@ -128,8 +128,17 @@ export const authService = {
 
   // Get current user
   getCurrentUser: () => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = localStorage.getItem('user');
+      if (!user || user === 'null' || user === 'undefined') {
+        return null;
+      }
+      return JSON.parse(user);
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      localStorage.removeItem('user'); // Clean up invalid data
+      return null;
+    }
   },
 };
 

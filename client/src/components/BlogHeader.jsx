@@ -1,10 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, PenTool, Home, User, Search } from "lucide-react";
+import { Menu, X, PenTool, Home, User, Search, LogOut } from "lucide-react";
+import { authService } from "@/services/api";
 
 const BlogHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+
+    // Listen for login events
+    const handleUserLogin = (event) => {
+      setUser(event.detail);
+    };
+
+    window.addEventListener('userLoggedIn', handleUserLogin);
+
+    return () => {
+      window.removeEventListener('userLoggedIn', handleUserLogin);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      authService.logout();
+      setUser(null);
+      
+      // Notify other components that user has logged out
+      window.dispatchEvent(new CustomEvent('userLoggedOut'));
+      
+      // Redirect to home page
+      window.location.href = '/';
+    }
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -36,18 +67,30 @@ const BlogHeader = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <Button variant="ghost">Login</Button>
-            </Link>
-            <Link to="/register">
-              <Button>Sign Up</Button>
-            </Link>
-            <Link to="/create-post">
-              <Button variant="outline" className="flex items-center space-x-1">
-                <PenTool className="h-4 w-4" />
-                <span>Write</span>
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <span className="text-sm text-gray-600">Welcome, {user.name}</span>
+                <Link to="/create-post">
+                  <Button variant="outline" className="flex items-center space-x-1">
+                    <PenTool className="h-4 w-4" />
+                    <span>Write</span>
+                  </Button>
+                </Link>
+                <Button variant="ghost" onClick={handleLogout} className="flex items-center space-x-1">
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link to="/register">
+                  <Button>Sign Up</Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -86,20 +129,32 @@ const BlogHeader = () => {
                 Contact
               </Link>
               <div className="pt-4 border-t flex flex-col space-y-2">
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start">
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full">Sign Up</Button>
-                </Link>
-                <Link to="/create-post" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="outline" className="w-full justify-start">
-                    <PenTool className="h-4 w-4 mr-2" />
-                    Write Post
-                  </Button>
-                </Link>
+                {user ? (
+                  <>
+                    <span className="text-sm text-gray-600 px-2">Welcome, {user.name}</span>
+                    <Link to="/create-post" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" className="w-full justify-start">
+                        <PenTool className="h-4 w-4 mr-2" />
+                        Write Post
+                      </Button>
+                    </Link>
+                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link to="/register" onClick={() => setIsMenuOpen(false)}>
+                      <Button className="w-full">Sign Up</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>

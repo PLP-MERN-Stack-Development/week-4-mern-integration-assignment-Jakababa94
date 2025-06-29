@@ -81,6 +81,11 @@ const Register = () => {
             <PenTool className="h-8 w-8 text-blue-600" />
             <span className="text-2xl font-bold text-gray-900">DevBlog</span>
           </Link>
+          <div className="mt-4">
+            <Link to="/" className="text-sm text-blue-600 hover:text-blue-800">
+              ← Back to Home
+            </Link>
+          </div>
         </div>
 
         <Card>
